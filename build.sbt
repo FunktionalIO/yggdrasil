@@ -4,7 +4,7 @@ import xerial.sbt.Sonatype.sonatypeCentralHost
 ThisBuild / tlBaseVersion := "0.0"
 val scala3Version = "3.5.2"
 
-ThisBuild / name                   := "project-template"
+ThisBuild / name                   := "yggdrasil"
 ThisBuild / homepage               := Some(url(s"https://github.com/FunktionalIO/${(ThisBuild / name).value}"))
 ThisBuild / description            := ""
 ThisBuild / scalaVersion           := scala3Version
@@ -41,14 +41,16 @@ ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin("17"))
 
 // Dependencies versions
 val versions = new {
-    val munit = "1.0.2"
+    val munit = "1.0.3"
+    val iron  = "2.6.0"
 }
 
 val sharedSettings = Seq(
   organization   := "io.funktional",
   scalaVersion   := "3.3.4",
   libraryDependencies ++= Seq(
-    "org.scalameta" %%% "munit" % "1.0.2" % Test
+    "io.github.iltotore" %%% "iron"  % versions.iron,
+    "org.scalameta"      %%% "munit" % versions.munit % Test
   ),
   // Headers
   headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment),
@@ -60,19 +62,21 @@ val sharedSettings = Seq(
   ))
 )
 
-lazy val core          = project
-    .in(file("modules/core"))
-    .settings(sharedSettings)
-    .settings(
-      name         := s"${(ThisBuild / name).value}-core",
-      scalaVersion := scala3Version,
-      libraryDependencies ++= Seq(
-        "org.scalameta" %% "munit"               % versions.munit % Test
-      )
-    )
+lazy val core =
+    crossProject(JSPlatform, JVMPlatform) // waiting for Iron to support Scalanative 0.5.x to add NativePlatform
+        .withoutSuffixFor(JVMPlatform)
+        .crossType(CrossType.Pure)
+        .in(file("modules/core"))
+        .settings(sharedSettings)
+        .jvmSettings(
+          // Add JVM-specific settings here
+        ).jsSettings(
+          // Add JS-specific settings here
+          scalaJSUseMainModuleInitializer := true
+        )
 lazy val root = project
     .in(file("."))
-    .aggregate(core)
+    .aggregate(core.jvm, core.js)
     .settings(sharedSettings)
     .settings(
       name           := (ThisBuild / name).value,
