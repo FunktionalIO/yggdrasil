@@ -47,7 +47,7 @@ val versions = new {
 
 val sharedSettings = Seq(
   organization   := "io.funktional",
-  scalaVersion   := "3.3.4",
+  scalaVersion   := "3.5.2",
   libraryDependencies ++= Seq(
     "io.github.iltotore" %%% "iron"  % versions.iron,
     "org.scalameta"      %%% "munit" % versions.munit % Test

@@ -103,7 +103,7 @@ object URN:
      * @return Either an error message or the parsed URN.
      */
     def parse(input: String): Either[String, URN] =
-        val urnPattern = """^(?i)urn(?-i):([^:]+):([^?#]+)(\?\+[^?#]*)?(\?=[^#]*)?(#.*)?$""".r
+        val urnPattern = """^[uU][rR][nN]:([^:]+):([^?#]+)(\?\+[^?#]*)?(\?=[^#]*)?(#.*)?$""".r
         input match
             case urnPattern(nid, nss, rOpt, qOpt, fOpt) =>
                 fromStrings(
