@@ -30,16 +30,9 @@ enum SubRegion(val region: Region, val code: ISO3166_1_Numeric):
     // Africa
     case NorthernAfrica              extends SubRegion(Region.Africa, ISO3166_1_Numeric("015"))
     case SubSaharanAfrica            extends SubRegion(Region.Africa, ISO3166_1_Numeric("202"))
-    case EasternAfrica               extends SubRegion(Region.Africa, ISO3166_1_Numeric("014"))
-    case MiddleAfrica                extends SubRegion(Region.Africa, ISO3166_1_Numeric("017"))
-    case SouthernAfrica              extends SubRegion(Region.Africa, ISO3166_1_Numeric("018"))
-    case WesternAfrica               extends SubRegion(Region.Africa, ISO3166_1_Numeric("011"))
     // Americas
     case NorthernAmerica             extends SubRegion(Region.Americas, ISO3166_1_Numeric("021"))
     case LatinAmericaAndTheCaribbean extends SubRegion(Region.Americas, ISO3166_1_Numeric("419"))
-    case Caribbean                   extends SubRegion(Region.Americas, ISO3166_1_Numeric("029"))
-    case CentralAmerica              extends SubRegion(Region.Americas, ISO3166_1_Numeric("013"))
-    case SouthAmerica                extends SubRegion(Region.Americas, ISO3166_1_Numeric("005"))
     // Asia
     case CentralAsia                 extends SubRegion(Region.Asia, ISO3166_1_Numeric("143"))
     case EasternAsia                 extends SubRegion(Region.Asia, ISO3166_1_Numeric("030"))
@@ -59,6 +52,23 @@ enum SubRegion(val region: Region, val code: ISO3166_1_Numeric):
 end SubRegion
 
 /**
+ * UN Geoscheme intermediate regions
+ * 
+ * @param subRegion the sub-region this intermediate region belongs to
+ * @param code the ISO 3166-1/M49 numeric code of the intermediate region
+ */
+enum IntermediateRegion(val subRegion: SubRegion, val code: ISO3166_1_Numeric):
+    case EasternAfrica  extends IntermediateRegion(SubRegion.SubSaharanAfrica, ISO3166_1_Numeric("014"))
+    case MiddleAfrica   extends IntermediateRegion(SubRegion.SubSaharanAfrica, ISO3166_1_Numeric("017"))
+    case SouthernAfrica extends IntermediateRegion(SubRegion.SubSaharanAfrica, ISO3166_1_Numeric("018"))
+    case WesternAfrica  extends IntermediateRegion(SubRegion.SubSaharanAfrica, ISO3166_1_Numeric("011"))
+
+    case Caribbean      extends IntermediateRegion(SubRegion.LatinAmericaAndTheCaribbean, ISO3166_1_Numeric("029"))
+    case CentralAmerica extends IntermediateRegion(SubRegion.LatinAmericaAndTheCaribbean, ISO3166_1_Numeric("013"))
+    case SouthAmerica   extends IntermediateRegion(SubRegion.LatinAmericaAndTheCaribbean, ISO3166_1_Numeric("005"))
+end IntermediateRegion
+
+/**
  * Countries as defined by the ISO 3166-1 standard
  * @param iso2 the ISO 3166-1 alpha-2 country code
  * @param iso3 the ISO 3166-1 alpha-3 country code
@@ -72,6 +82,9 @@ end SubRegion
  * @param subRegion the sub-region the country belongs to
  *                  (according to the UN Geoscheme classification)
  *                  @see [[SubRegion]]
+ * @param intermediateRegion the intermediate region the country belongs to
+ *                           (according to the UN Geoscheme classification)
+ *                           @see [[IntermediateRegion]]
  * @param topLevelDomain the top-level domain of the country
  *                       (e.g. ".fr" for France)
  *                       @see [[CcTLD]]
@@ -87,6 +100,7 @@ enum Country(
     val capital: Maybe[String],
     val region: Region,
     val subRegion: Maybe[SubRegion] = Absent,
+    val intermediateRegion: Maybe[IntermediateRegion] = Absent,
     val topLevelDomain: Maybe[CcTLD] = Absent,
     val Currency: Maybe[Currency] = Absent
 ):
@@ -98,7 +112,8 @@ enum Country(
           name = "Andorra",
           capital = "Andorra la Vella",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ad"),
           Currency = Currency.EUR
         )
@@ -111,7 +126,8 @@ enum Country(
           name = "United Arab Emirates",
           capital = "Abu Dhabi",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ae"),
           Currency = Currency.AED
         )
@@ -125,6 +141,7 @@ enum Country(
           capital = "Kabul",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("af"),
           Currency = Currency.AFN
         )
@@ -137,7 +154,8 @@ enum Country(
           name = "Antigua and Barbuda",
           capital = "St. John's",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("ag"),
           Currency = Currency.XCD
         )
@@ -150,7 +168,8 @@ enum Country(
           name = "Anguilla",
           capital = "The Valley",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("ai"),
           Currency = Currency.XCD
         )
@@ -163,7 +182,8 @@ enum Country(
           name = "Albania",
           capital = "Tirana",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("al"),
           Currency = Currency.ALL
         )
@@ -176,7 +196,8 @@ enum Country(
           name = "Armenia",
           capital = "Yerevan",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("am"),
           Currency = Currency.AMD
         )
@@ -189,7 +210,8 @@ enum Country(
           name = "Angola",
           capital = "Luanda",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("ao"),
           Currency = Currency.AOA
         )
@@ -202,7 +224,8 @@ enum Country(
           name = "Antarctica",
           capital = "",
           region = Region.Antarctica,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = Absent,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("aq"),
           Currency = Absent
         )
@@ -215,7 +238,8 @@ enum Country(
           name = "Argentina",
           capital = "Buenos Aires",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("ar"),
           Currency = Currency.ARS
         )
@@ -228,7 +252,8 @@ enum Country(
           name = "American Samoa",
           capital = "Pago Pago",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("as"),
           Currency = Currency.USD
         )
@@ -241,7 +266,8 @@ enum Country(
           name = "Austria",
           capital = "Vienna",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("at"),
           Currency = Currency.EUR
         )
@@ -254,7 +280,8 @@ enum Country(
           name = "Australia",
           capital = "Canberra",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.AustraliaAndNewZealand,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("au"),
           Currency = Currency.AUD
         )
@@ -267,7 +294,8 @@ enum Country(
           name = "Aruba",
           capital = "Oranjestad",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("aw"),
           Currency = Currency.AWG
         )
@@ -280,7 +308,8 @@ enum Country(
           name = "Aland Islands",
           capital = "Mariehamn",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ax"),
           Currency = Currency.EUR
         )
@@ -292,7 +321,8 @@ enum Country(
           name = "Azerbaijan",
           capital = "Baku",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("az"),
           Currency = Currency.AZN
         )
@@ -305,7 +335,8 @@ enum Country(
           name = "Bosnia and Herzegovina",
           capital = "Sarajevo",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ba"),
           Currency = Currency.BAM
         )
@@ -318,7 +349,8 @@ enum Country(
           name = "Barbados",
           capital = "Bridgetown",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("bb"),
           Currency = Currency.BBD
         )
@@ -332,6 +364,7 @@ enum Country(
           capital = "Dhaka",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("bd"),
           Currency = Currency.BDT
         )
@@ -344,7 +377,8 @@ enum Country(
           name = "Belgium",
           capital = "Brussels",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("be"),
           Currency = Currency.EUR
         )
@@ -357,7 +391,8 @@ enum Country(
           name = "Burkina Faso",
           capital = "Ouagadougou",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("bf"),
           Currency = Currency.XOF
         )
@@ -370,7 +405,8 @@ enum Country(
           name = "Bulgaria",
           capital = "Sofia",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("bg"),
           Currency = Currency.BGN
         )
@@ -383,7 +419,8 @@ enum Country(
           name = "Bahrain",
           capital = "Manama",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("bh"),
           Currency = Currency.BHD
         )
@@ -396,7 +433,8 @@ enum Country(
           name = "Burundi",
           capital = "Gitega",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("bi"),
           Currency = Currency.BIF
         )
@@ -409,7 +447,8 @@ enum Country(
           name = "Benin",
           capital = "Porto-Novo",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("bj"),
           Currency = Currency.XOF
         )
@@ -422,7 +461,8 @@ enum Country(
           name = "Saint Barthelemy",
           capital = "Gustavia",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("gp"),
           Currency = Currency.EUR
         )
@@ -435,7 +475,8 @@ enum Country(
           name = "Bermuda",
           capital = "Hamilton",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAmerica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("bm"),
           Currency = Currency.BMD
         )
@@ -445,10 +486,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("BRN"),
           isoNumeric = ISO3166_1_Numeric("096"),
           fips = Fips10_4("BX"),
-          name = "Brunei",
+          name = "Brunei Darussalam",
           capital = "Bandar Seri Begawan",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("bn"),
           Currency = Currency.BND
         )
@@ -458,10 +500,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("BOL"),
           isoNumeric = ISO3166_1_Numeric("068"),
           fips = Fips10_4("BL"),
-          name = "Bolivia",
+          name = "Bolivia (Plurinational State of)",
           capital = "Sucre",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("bo"),
           Currency = Currency.BOB
         )
@@ -474,7 +517,8 @@ enum Country(
           name = "Bonaire, Saint Eustatius and Saba ",
           capital = "",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("bq"),
           Currency = Currency.USD
         )
@@ -487,7 +531,8 @@ enum Country(
           name = "Brazil",
           capital = "Brasilia",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("br"),
           Currency = Currency.BRL
         )
@@ -500,7 +545,8 @@ enum Country(
           name = "Bahamas",
           capital = "Nassau",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("bs"),
           Currency = Currency.BSD
         )
@@ -526,7 +572,8 @@ enum Country(
           name = "Bouvet Island",
           capital = "",
           region = Region.Antarctica,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("bv"),
           Currency = Currency.NOK
         )
@@ -539,7 +586,8 @@ enum Country(
           name = "Botswana",
           capital = "Gaborone",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.SouthernAfrica,
           topLevelDomain = CcTLD("bw"),
           Currency = Currency.BWP
         )
@@ -552,7 +600,8 @@ enum Country(
           name = "Belarus",
           capital = "Minsk",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("by"),
           Currency = Currency.BYN
         )
@@ -565,7 +614,8 @@ enum Country(
           name = "Belize",
           capital = "Belmopan",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("bz"),
           Currency = Currency.BZD
         )
@@ -578,7 +628,8 @@ enum Country(
           name = "Canada",
           capital = "Ottawa",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAmerica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ca"),
           Currency = Currency.CAD
         )
@@ -590,13 +641,14 @@ enum Country(
           fips = Fips10_4("CK"),
           name = "Cocos Islands",
           capital = "West Island",
-          region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          region = Region.Oceania,
+          subRegion = SubRegion.AustraliaAndNewZealand,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("cc"),
           Currency = Currency.AUD
         )
 
-    case DemocraticRepublicoftheCongo extends Country(
+    case DemocraticRepublicOfTheCongo extends Country(
           iso2 = ISO3166_1_Alpha2("CD"),
           iso3 = ISO3166_1_Alpha3("COD"),
           isoNumeric = ISO3166_1_Numeric("180"),
@@ -604,7 +656,8 @@ enum Country(
           name = "Democratic Republic of the Congo",
           capital = "Kinshasa",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("cd"),
           Currency = Currency.CDF
         )
@@ -622,7 +675,7 @@ enum Country(
           Currency = Currency.XAF
         )
 
-    case RepublicoftheCongo extends Country(
+    case RepublicOfTheCongo extends Country(
           iso2 = ISO3166_1_Alpha2("CG"),
           iso3 = ISO3166_1_Alpha3("COG"),
           isoNumeric = ISO3166_1_Numeric("178"),
@@ -630,7 +683,8 @@ enum Country(
           name = "Republic of the Congo",
           capital = "Brazzaville",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("cg"),
           Currency = Currency.XAF
         )
@@ -643,7 +697,8 @@ enum Country(
           name = "Switzerland",
           capital = "Bern",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ch"),
           Currency = Currency.CHF
         )
@@ -656,7 +711,8 @@ enum Country(
           name = "Ivory Coast",
           capital = "Yamoussoukro",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("ci"),
           Currency = Currency.XOF
         )
@@ -669,7 +725,8 @@ enum Country(
           name = "Cook Islands",
           capital = "Avarua",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ck"),
           Currency = Currency.NZD
         )
@@ -682,7 +739,8 @@ enum Country(
           name = "Chile",
           capital = "Santiago",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("cl"),
           Currency = Currency.CLP
         )
@@ -695,7 +753,8 @@ enum Country(
           name = "Cameroon",
           capital = "Yaounde",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("cm"),
           Currency = Currency.XAF
         )
@@ -708,7 +767,8 @@ enum Country(
           name = "China",
           capital = "Beijing",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("cn"),
           Currency = Currency.CNY
         )
@@ -721,7 +781,8 @@ enum Country(
           name = "Colombia",
           capital = "Bogota",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("co"),
           Currency = Currency.COP
         )
@@ -734,7 +795,8 @@ enum Country(
           name = "Costa Rica",
           capital = "San Jose",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("cr"),
           Currency = Currency.CRC
         )
@@ -747,7 +809,8 @@ enum Country(
           name = "Cuba",
           capital = "Havana",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("cu"),
           Currency = Currency.CUP
         )
@@ -760,7 +823,8 @@ enum Country(
           name = "Cabo Verde",
           capital = "Praia",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("cv"),
           Currency = Currency.CVE
         )
@@ -773,7 +837,8 @@ enum Country(
           name = "Curacao",
           capital = " Willemstad",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("cw"),
           Currency = Currency.ANG
         )
@@ -786,7 +851,8 @@ enum Country(
           name = "Christmas Island",
           capital = "Flying Fish Cove",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.AustraliaAndNewZealand,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("cx"),
           Currency = Currency.AUD
         )
@@ -799,7 +865,8 @@ enum Country(
           name = "Cyprus",
           capital = "Nicosia",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("cy"),
           Currency = Currency.EUR
         )
@@ -812,7 +879,8 @@ enum Country(
           name = "Czechia",
           capital = "Prague",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("cz"),
           Currency = Currency.CZK
         )
@@ -825,7 +893,8 @@ enum Country(
           name = "Germany",
           capital = "Berlin",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("de"),
           Currency = Currency.EUR
         )
@@ -838,7 +907,8 @@ enum Country(
           name = "Djibouti",
           capital = "Djibouti",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("dj"),
           Currency = Currency.DJF
         )
@@ -851,7 +921,8 @@ enum Country(
           name = "Denmark",
           capital = "Copenhagen",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("dk"),
           Currency = Currency.DKK
         )
@@ -864,7 +935,8 @@ enum Country(
           name = "Dominica",
           capital = "Roseau",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("dm"),
           Currency = Currency.XCD
         )
@@ -877,7 +949,8 @@ enum Country(
           name = "Dominican Republic",
           capital = "Santo Domingo",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("do"),
           Currency = Currency.DOP
         )
@@ -890,7 +963,8 @@ enum Country(
           name = "Algeria",
           capital = "Algiers",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("dz"),
           Currency = Currency.DZD
         )
@@ -903,7 +977,8 @@ enum Country(
           name = "Ecuador",
           capital = "Quito",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("ec"),
           Currency = Currency.USD
         )
@@ -916,7 +991,8 @@ enum Country(
           name = "Estonia",
           capital = "Tallinn",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ee"),
           Currency = Currency.EUR
         )
@@ -929,7 +1005,8 @@ enum Country(
           name = "Egypt",
           capital = "Cairo",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("eg"),
           Currency = Currency.EGP
         )
@@ -942,7 +1019,8 @@ enum Country(
           name = "Western Sahara",
           capital = "El-Aaiun",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("eh"),
           Currency = Currency.MAD
         )
@@ -955,7 +1033,8 @@ enum Country(
           name = "Eritrea",
           capital = "Asmara",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("er"),
           Currency = Currency.ERN
         )
@@ -968,7 +1047,8 @@ enum Country(
           name = "Spain",
           capital = "Madrid",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("es"),
           Currency = Currency.EUR
         )
@@ -981,7 +1061,8 @@ enum Country(
           name = "Ethiopia",
           capital = "Addis Ababa",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("et"),
           Currency = Currency.ETB
         )
@@ -994,7 +1075,7 @@ enum Country(
           name = "Finland",
           capital = "Helsinki",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
           topLevelDomain = CcTLD("fi"),
           Currency = Currency.EUR
         )
@@ -1007,7 +1088,8 @@ enum Country(
           name = "Fiji",
           capital = "Suva",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Melanesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("fj"),
           Currency = Currency.FJD
         )
@@ -1017,10 +1099,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("FLK"),
           isoNumeric = ISO3166_1_Numeric("238"),
           fips = Fips10_4("FK"),
-          name = "Falkland Islands",
+          name = "Falkland Islands (Malvinas)",
           capital = "Stanley",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("fk"),
           Currency = Currency.FKP
         )
@@ -1030,10 +1113,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("FSM"),
           isoNumeric = ISO3166_1_Numeric("583"),
           fips = Fips10_4("FM"),
-          name = "Micronesia",
+          name = "Micronesia (Federated States of)",
           capital = "Palikir",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("fm"),
           Currency = Currency.USD
         )
@@ -1046,7 +1130,8 @@ enum Country(
           name = "Faroe Islands",
           capital = "Torshavn",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("fo"),
           Currency = Currency.DKK
         )
@@ -1059,7 +1144,8 @@ enum Country(
           name = "France",
           capital = "Paris",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("fr"),
           Currency = Currency.EUR
         )
@@ -1072,7 +1158,8 @@ enum Country(
           name = "Gabon",
           capital = "Libreville",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("ga"),
           Currency = Currency.XAF
         )
@@ -1082,10 +1169,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("GBR"),
           isoNumeric = ISO3166_1_Numeric("826"),
           fips = Fips10_4("UK"),
-          name = "United Kingdom",
+          name = "United Kingdom of Great Britain and Northern Ireland",
           capital = "London",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("uk"),
           Currency = Currency.GBP
         )
@@ -1098,7 +1186,8 @@ enum Country(
           name = "Grenada",
           capital = "St. George's",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("gd"),
           Currency = Currency.XCD
         )
@@ -1111,7 +1200,8 @@ enum Country(
           name = "Georgia",
           capital = "Tbilisi",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ge"),
           Currency = Currency.GEL
         )
@@ -1124,7 +1214,8 @@ enum Country(
           name = "French Guiana",
           capital = "Cayenne",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("gf"),
           Currency = Currency.EUR
         )
@@ -1137,7 +1228,8 @@ enum Country(
           name = "Guernsey",
           capital = "St Peter Port",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("gg"),
           Currency = Currency.GBP
         )
@@ -1150,7 +1242,8 @@ enum Country(
           name = "Ghana",
           capital = "Accra",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("gh"),
           Currency = Currency.GHS
         )
@@ -1163,7 +1256,8 @@ enum Country(
           name = "Gibraltar",
           capital = "Gibraltar",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("gi"),
           Currency = Currency.GIP
         )
@@ -1176,7 +1270,8 @@ enum Country(
           name = "Greenland",
           capital = "Nuuk",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAmerica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("gl"),
           Currency = Currency.DKK
         )
@@ -1189,7 +1284,8 @@ enum Country(
           name = "Gambia",
           capital = "Banjul",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("gm"),
           Currency = Currency.GMD
         )
@@ -1202,7 +1298,8 @@ enum Country(
           name = "Guinea",
           capital = "Conakry",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("gn"),
           Currency = Currency.GNF
         )
@@ -1215,7 +1312,8 @@ enum Country(
           name = "Guadeloupe",
           capital = "Basse-Terre",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("gp"),
           Currency = Currency.EUR
         )
@@ -1228,7 +1326,8 @@ enum Country(
           name = "Equatorial Guinea",
           capital = "Malabo",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("gq"),
           Currency = Currency.XAF
         )
@@ -1241,7 +1340,8 @@ enum Country(
           name = "Greece",
           capital = "Athens",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("gr"),
           Currency = Currency.EUR
         )
@@ -1253,8 +1353,9 @@ enum Country(
           fips = Fips10_4("SX"),
           name = "South Georgia and the South Sandwich Islands",
           capital = "Grytviken",
-          region = Region.Antarctica,
-          subRegion = SubRegion.SouthernAsia,
+          region = Region.Americas,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("gs"),
           Currency = Currency.GBP
         )
@@ -1267,7 +1368,8 @@ enum Country(
           name = "Guatemala",
           capital = "Guatemala City",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("gt"),
           Currency = Currency.GTQ
         )
@@ -1280,7 +1382,8 @@ enum Country(
           name = "Guam",
           capital = "Hagatna",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("gu"),
           Currency = Currency.USD
         )
@@ -1293,7 +1396,8 @@ enum Country(
           name = "Guinea-Bissau",
           capital = "Bissau",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("gw"),
           Currency = Currency.XOF
         )
@@ -1306,7 +1410,8 @@ enum Country(
           name = "Guyana",
           capital = "Georgetown",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("gy"),
           Currency = Currency.GYD
         )
@@ -1316,10 +1421,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("HKG"),
           isoNumeric = ISO3166_1_Numeric("344"),
           fips = Fips10_4("HK"),
-          name = "Hong Kong",
+          name = "China, Hong Kong Special Administrative Region",
           capital = "Hong Kong",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("hk"),
           Currency = Currency.HKD
         )
@@ -1331,8 +1437,9 @@ enum Country(
           fips = Fips10_4("HM"),
           name = "Heard Island and McDonald Islands",
           capital = "",
-          region = Region.Antarctica,
-          subRegion = SubRegion.SouthernAsia,
+          region = Region.Oceania,
+          subRegion = SubRegion.AustraliaAndNewZealand,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("hm"),
           Currency = Currency.AUD
         )
@@ -1345,7 +1452,8 @@ enum Country(
           name = "Honduras",
           capital = "Tegucigalpa",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("hn"),
           Currency = Currency.HNL
         )
@@ -1358,7 +1466,8 @@ enum Country(
           name = "Croatia",
           capital = "Zagreb",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("hr"),
           Currency = Currency.EUR
         )
@@ -1371,7 +1480,8 @@ enum Country(
           name = "Haiti",
           capital = "Port-au-Prince",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("ht"),
           Currency = Currency.HTG
         )
@@ -1384,7 +1494,8 @@ enum Country(
           name = "Hungary",
           capital = "Budapest",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("hu"),
           Currency = Currency.HUF
         )
@@ -1397,7 +1508,8 @@ enum Country(
           name = "Indonesia",
           capital = "Jakarta",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("id"),
           Currency = Currency.IDR
         )
@@ -1410,7 +1522,8 @@ enum Country(
           name = "Ireland",
           capital = "Dublin",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ie"),
           Currency = Currency.EUR
         )
@@ -1423,7 +1536,8 @@ enum Country(
           name = "Israel",
           capital = "Jerusalem",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("il"),
           Currency = Currency.ILS
         )
@@ -1436,7 +1550,8 @@ enum Country(
           name = "Isle of Man",
           capital = "Douglas",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("im"),
           Currency = Currency.GBP
         )
@@ -1450,6 +1565,7 @@ enum Country(
           capital = "New Delhi",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("in"),
           Currency = Currency.INR
         )
@@ -1461,8 +1577,9 @@ enum Country(
           fips = Fips10_4("IO"),
           name = "British Indian Ocean Territory",
           capital = "Diego Garcia",
-          region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          region = Region.Africa,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("io"),
           Currency = Currency.USD
         )
@@ -1475,7 +1592,8 @@ enum Country(
           name = "Iraq",
           capital = "Baghdad",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("iq"),
           Currency = Currency.IQD
         )
@@ -1485,10 +1603,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("IRN"),
           isoNumeric = ISO3166_1_Numeric("364"),
           fips = Fips10_4("IR"),
-          name = "Iran",
+          name = "Iran (Islamic Republic of)",
           capital = "Tehran",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ir"),
           Currency = Currency.IRR
         )
@@ -1501,7 +1620,8 @@ enum Country(
           name = "Iceland",
           capital = "Reykjavik",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("is"),
           Currency = Currency.ISK
         )
@@ -1514,7 +1634,8 @@ enum Country(
           name = "Italy",
           capital = "Rome",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("it"),
           Currency = Currency.EUR
         )
@@ -1527,7 +1648,8 @@ enum Country(
           name = "Jersey",
           capital = "Saint Helier",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("je"),
           Currency = Currency.GBP
         )
@@ -1540,7 +1662,8 @@ enum Country(
           name = "Jamaica",
           capital = "Kingston",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("jm"),
           Currency = Currency.JMD
         )
@@ -1553,7 +1676,8 @@ enum Country(
           name = "Jordan",
           capital = "Amman",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("jo"),
           Currency = Currency.JOD
         )
@@ -1566,7 +1690,8 @@ enum Country(
           name = "Japan",
           capital = "Tokyo",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("jp"),
           Currency = Currency.JPY
         )
@@ -1579,7 +1704,8 @@ enum Country(
           name = "Kenya",
           capital = "Nairobi",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("ke"),
           Currency = Currency.KES
         )
@@ -1592,7 +1718,8 @@ enum Country(
           name = "Kyrgyzstan",
           capital = "Bishkek",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.CentralAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("kg"),
           Currency = Currency.KGS
         )
@@ -1605,7 +1732,8 @@ enum Country(
           name = "Cambodia",
           capital = "Phnom Penh",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("kh"),
           Currency = Currency.KHR
         )
@@ -1618,7 +1746,8 @@ enum Country(
           name = "Kiribati",
           capital = "Tarawa",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ki"),
           Currency = Currency.AUD
         )
@@ -1631,7 +1760,8 @@ enum Country(
           name = "Comoros",
           capital = "Moroni",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("km"),
           Currency = Currency.KMF
         )
@@ -1644,7 +1774,8 @@ enum Country(
           name = "Saint Kitts and Nevis",
           capital = "Basseterre",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("kn"),
           Currency = Currency.XCD
         )
@@ -1654,10 +1785,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("PRK"),
           isoNumeric = ISO3166_1_Numeric("408"),
           fips = Fips10_4("KN"),
-          name = "North Korea",
+          name = "Democratic People's Republic of Korea",
           capital = "Pyongyang",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("kp"),
           Currency = Currency.KPW
         )
@@ -1667,10 +1799,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("KOR"),
           isoNumeric = ISO3166_1_Numeric("410"),
           fips = Fips10_4("KS"),
-          name = "South Korea",
+          name = "Republic of Korea",
           capital = "Seoul",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("kr"),
           Currency = Currency.KRW
         )
@@ -1683,7 +1816,8 @@ enum Country(
           name = "Kosovo",
           capital = "Pristina",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = Absent,
           Currency = Currency.EUR
         )
@@ -1696,7 +1830,8 @@ enum Country(
           name = "Kuwait",
           capital = "Kuwait City",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("kw"),
           Currency = Currency.KWD
         )
@@ -1709,7 +1844,8 @@ enum Country(
           name = "Cayman Islands",
           capital = "George Town",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("ky"),
           Currency = Currency.KYD
         )
@@ -1722,7 +1858,8 @@ enum Country(
           name = "Kazakhstan",
           capital = "Nur-Sultan",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.CentralAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("kz"),
           Currency = Currency.KZT
         )
@@ -1732,10 +1869,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("LAO"),
           isoNumeric = ISO3166_1_Numeric("418"),
           fips = Fips10_4("LA"),
-          name = "Laos",
+          name = "Lao People's Democratic Republic",
           capital = "Vientiane",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("la"),
           Currency = Currency.LAK
         )
@@ -1748,7 +1886,8 @@ enum Country(
           name = "Lebanon",
           capital = "Beirut",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("lb"),
           Currency = Currency.LBP
         )
@@ -1761,7 +1900,8 @@ enum Country(
           name = "Saint Lucia",
           capital = "Castries",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("lc"),
           Currency = Currency.XCD
         )
@@ -1774,7 +1914,8 @@ enum Country(
           name = "Liechtenstein",
           capital = "Vaduz",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("li"),
           Currency = Currency.CHF
         )
@@ -1788,6 +1929,7 @@ enum Country(
           capital = "Colombo",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("lk"),
           Currency = Currency.LKR
         )
@@ -1800,7 +1942,8 @@ enum Country(
           name = "Liberia",
           capital = "Monrovia",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("lr"),
           Currency = Currency.LRD
         )
@@ -1813,7 +1956,8 @@ enum Country(
           name = "Lesotho",
           capital = "Maseru",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.SouthernAfrica,
           topLevelDomain = CcTLD("ls"),
           Currency = Currency.LSL
         )
@@ -1826,7 +1970,8 @@ enum Country(
           name = "Lithuania",
           capital = "Vilnius",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("lt"),
           Currency = Currency.EUR
         )
@@ -1839,7 +1984,8 @@ enum Country(
           name = "Luxembourg",
           capital = "Luxembourg",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("lu"),
           Currency = Currency.EUR
         )
@@ -1852,7 +1998,8 @@ enum Country(
           name = "Latvia",
           capital = "Riga",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("lv"),
           Currency = Currency.EUR
         )
@@ -1865,7 +2012,8 @@ enum Country(
           name = "Libya",
           capital = "Tripoli",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ly"),
           Currency = Currency.LYD
         )
@@ -1878,7 +2026,8 @@ enum Country(
           name = "Morocco",
           capital = "Rabat",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ma"),
           Currency = Currency.MAD
         )
@@ -1891,7 +2040,8 @@ enum Country(
           name = "Monaco",
           capital = "Monaco",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mc"),
           Currency = Currency.EUR
         )
@@ -1901,10 +2051,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("MDA"),
           isoNumeric = ISO3166_1_Numeric("498"),
           fips = Fips10_4("MD"),
-          name = "Moldova",
+          name = "republic of Moldova",
           capital = "Chisinau",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("md"),
           Currency = Currency.MDL
         )
@@ -1917,7 +2068,8 @@ enum Country(
           name = "Montenegro",
           capital = "Podgorica",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("me"),
           Currency = Currency.EUR
         )
@@ -1930,7 +2082,8 @@ enum Country(
           name = "Saint Martin",
           capital = "Marigot",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("gp"),
           Currency = Currency.EUR
         )
@@ -1943,7 +2096,8 @@ enum Country(
           name = "Madagascar",
           capital = "Antananarivo",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("mg"),
           Currency = Currency.MGA
         )
@@ -1956,7 +2110,8 @@ enum Country(
           name = "Marshall Islands",
           capital = "Majuro",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mh"),
           Currency = Currency.USD
         )
@@ -1969,7 +2124,8 @@ enum Country(
           name = "North Macedonia",
           capital = "Skopje",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mk"),
           Currency = Currency.MKD
         )
@@ -1982,7 +2138,8 @@ enum Country(
           name = "Mali",
           capital = "Bamako",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("ml"),
           Currency = Currency.XOF
         )
@@ -1995,7 +2152,8 @@ enum Country(
           name = "Myanmar",
           capital = "Nay Pyi Taw",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mm"),
           Currency = Currency.MMK
         )
@@ -2008,7 +2166,8 @@ enum Country(
           name = "Mongolia",
           capital = "Ulaanbaatar",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mn"),
           Currency = Currency.MNT
         )
@@ -2018,10 +2177,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("MAC"),
           isoNumeric = ISO3166_1_Numeric("446"),
           fips = Fips10_4("MC"),
-          name = "Macao",
+          name = "China, Macao Special Administrative Region",
           capital = "Macao",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mo"),
           Currency = Currency.MOP
         )
@@ -2034,7 +2194,8 @@ enum Country(
           name = "Northern Mariana Islands",
           capital = "Saipan",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mp"),
           Currency = Currency.USD
         )
@@ -2047,7 +2208,8 @@ enum Country(
           name = "Martinique",
           capital = "Fort-de-France",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("mq"),
           Currency = Currency.EUR
         )
@@ -2060,7 +2222,8 @@ enum Country(
           name = "Mauritania",
           capital = "Nouakchott",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("mr"),
           Currency = Currency.MRU
         )
@@ -2073,7 +2236,8 @@ enum Country(
           name = "Montserrat",
           capital = "Plymouth",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("ms"),
           Currency = Currency.XCD
         )
@@ -2086,7 +2250,8 @@ enum Country(
           name = "Malta",
           capital = "Valletta",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mt"),
           Currency = Currency.EUR
         )
@@ -2099,7 +2264,8 @@ enum Country(
           name = "Mauritius",
           capital = "Port Louis",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("mu"),
           Currency = Currency.MUR
         )
@@ -2113,6 +2279,7 @@ enum Country(
           capital = "Male",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("mv"),
           Currency = Currency.MVR
         )
@@ -2125,7 +2292,8 @@ enum Country(
           name = "Malawi",
           capital = "Lilongwe",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("mw"),
           Currency = Currency.MWK
         )
@@ -2138,7 +2306,8 @@ enum Country(
           name = "Mexico",
           capital = "Mexico City",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("mx"),
           Currency = Currency.MXN
         )
@@ -2151,7 +2320,8 @@ enum Country(
           name = "Malaysia",
           capital = "Kuala Lumpur",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("my"),
           Currency = Currency.MYR
         )
@@ -2164,7 +2334,8 @@ enum Country(
           name = "Mozambique",
           capital = "Maputo",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("mz"),
           Currency = Currency.MZN
         )
@@ -2177,7 +2348,8 @@ enum Country(
           name = "Namibia",
           capital = "Windhoek",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.SouthernAfrica,
           topLevelDomain = CcTLD("na"),
           Currency = Currency.NAD
         )
@@ -2190,7 +2362,8 @@ enum Country(
           name = "New Caledonia",
           capital = "Noumea",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Melanesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("nc"),
           Currency = Currency.XPF
         )
@@ -2203,7 +2376,8 @@ enum Country(
           name = "Niger",
           capital = "Niamey",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("ne"),
           Currency = Currency.XOF
         )
@@ -2216,7 +2390,8 @@ enum Country(
           name = "Norfolk Island",
           capital = "Kingston",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.AustraliaAndNewZealand,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("nf"),
           Currency = Currency.AUD
         )
@@ -2229,7 +2404,8 @@ enum Country(
           name = "Nigeria",
           capital = "Abuja",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("ng"),
           Currency = Currency.NGN
         )
@@ -2242,7 +2418,8 @@ enum Country(
           name = "Nicaragua",
           capital = "Managua",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("ni"),
           Currency = Currency.NIO
         )
@@ -2252,10 +2429,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("NLD"),
           isoNumeric = ISO3166_1_Numeric("528"),
           fips = Fips10_4("NL"),
-          name = "The Netherlands",
+          name = "Netherlands (Kingdom of the)",
           capital = "Amsterdam",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("nl"),
           Currency = Currency.EUR
         )
@@ -2268,7 +2446,8 @@ enum Country(
           name = "Norway",
           capital = "Oslo",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("no"),
           Currency = Currency.NOK
         )
@@ -2282,6 +2461,7 @@ enum Country(
           capital = "Kathmandu",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("np"),
           Currency = Currency.NPR
         )
@@ -2294,7 +2474,8 @@ enum Country(
           name = "Nauru",
           capital = "Yaren",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("nr"),
           Currency = Currency.AUD
         )
@@ -2307,7 +2488,8 @@ enum Country(
           name = "Niue",
           capital = "Alofi",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("nu"),
           Currency = Currency.NZD
         )
@@ -2320,7 +2502,8 @@ enum Country(
           name = "New Zealand",
           capital = "Wellington",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.AustraliaAndNewZealand,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("nz"),
           Currency = Currency.NZD
         )
@@ -2333,7 +2516,8 @@ enum Country(
           name = "Oman",
           capital = "Muscat",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("om"),
           Currency = Currency.OMR
         )
@@ -2346,7 +2530,8 @@ enum Country(
           name = "Panama",
           capital = "Panama City",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("pa"),
           Currency = Currency.PAB
         )
@@ -2359,7 +2544,8 @@ enum Country(
           name = "Peru",
           capital = "Lima",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("pe"),
           Currency = Currency.PEN
         )
@@ -2372,7 +2558,8 @@ enum Country(
           name = "French Polynesia",
           capital = "Papeete",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pf"),
           Currency = Currency.XPF
         )
@@ -2385,7 +2572,8 @@ enum Country(
           name = "Papua New Guinea",
           capital = "Port Moresby",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Melanesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pg"),
           Currency = Currency.PGK
         )
@@ -2398,7 +2586,8 @@ enum Country(
           name = "Philippines",
           capital = "Manila",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ph"),
           Currency = Currency.PHP
         )
@@ -2412,6 +2601,7 @@ enum Country(
           capital = "Islamabad",
           region = Region.Asia,
           subRegion = SubRegion.SouthernAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pk"),
           Currency = Currency.PKR
         )
@@ -2424,7 +2614,8 @@ enum Country(
           name = "Poland",
           capital = "Warsaw",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pl"),
           Currency = Currency.PLN
         )
@@ -2437,7 +2628,8 @@ enum Country(
           name = "Saint Pierre and Miquelon",
           capital = "Saint-Pierre",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAmerica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pm"),
           Currency = Currency.EUR
         )
@@ -2450,7 +2642,8 @@ enum Country(
           name = "Pitcairn",
           capital = "Adamstown",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pn"),
           Currency = Currency.NZD
         )
@@ -2463,20 +2656,22 @@ enum Country(
           name = "Puerto Rico",
           capital = "San Juan",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("pr"),
           Currency = Currency.USD
         )
 
-    case PalestinianTerritory extends Country(
+    case Palestine extends Country(
           iso2 = ISO3166_1_Alpha2("PS"),
           iso3 = ISO3166_1_Alpha3("PSE"),
           isoNumeric = ISO3166_1_Numeric("275"),
           fips = Fips10_4("WE"),
-          name = "Palestinian Territory",
+          name = "State of Palestine",
           capital = "East Jerusalem",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ps"),
           Currency = Currency.ILS
         )
@@ -2489,7 +2684,8 @@ enum Country(
           name = "Portugal",
           capital = "Lisbon",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pt"),
           Currency = Currency.EUR
         )
@@ -2502,7 +2698,8 @@ enum Country(
           name = "Palau",
           capital = "Melekeok",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("pw"),
           Currency = Currency.USD
         )
@@ -2515,7 +2712,8 @@ enum Country(
           name = "Paraguay",
           capital = "Asuncion",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("py"),
           Currency = Currency.PYG
         )
@@ -2528,7 +2726,8 @@ enum Country(
           name = "Qatar",
           capital = "Doha",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("qa"),
           Currency = Currency.QAR
         )
@@ -2541,7 +2740,8 @@ enum Country(
           name = "Reunion",
           capital = "Saint-Denis",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("re"),
           Currency = Currency.EUR
         )
@@ -2554,7 +2754,8 @@ enum Country(
           name = "Romania",
           capital = "Bucharest",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ro"),
           Currency = Currency.RON
         )
@@ -2567,20 +2768,22 @@ enum Country(
           name = "Serbia",
           capital = "Belgrade",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("rs"),
           Currency = Currency.RSD
         )
 
-    case Russia extends Country(
+    case RussianFederation extends Country(
           iso2 = ISO3166_1_Alpha2("RU"),
           iso3 = ISO3166_1_Alpha3("RUS"),
           isoNumeric = ISO3166_1_Numeric("643"),
           fips = Fips10_4("RS"),
-          name = "Russia",
+          name = "Russian Federation",
           capital = "Moscow",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ru"),
           Currency = Currency.RUB
         )
@@ -2593,7 +2796,8 @@ enum Country(
           name = "Rwanda",
           capital = "Kigali",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("rw"),
           Currency = Currency.RWF
         )
@@ -2606,7 +2810,8 @@ enum Country(
           name = "Saudi Arabia",
           capital = "Riyadh",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sa"),
           Currency = Currency.SAR
         )
@@ -2619,7 +2824,8 @@ enum Country(
           name = "Solomon Islands",
           capital = "Honiara",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Melanesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sb"),
           Currency = Currency.SBD
         )
@@ -2632,7 +2838,8 @@ enum Country(
           name = "Seychelles",
           capital = "Victoria",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("sc"),
           Currency = Currency.SCR
         )
@@ -2645,7 +2852,8 @@ enum Country(
           name = "Sudan",
           capital = "Khartoum",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sd"),
           Currency = Currency.SDG
         )
@@ -2658,7 +2866,8 @@ enum Country(
           name = "South Sudan",
           capital = "Juba",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("ss"),
           Currency = Currency.SSP
         )
@@ -2671,7 +2880,8 @@ enum Country(
           name = "Sweden",
           capital = "Stockholm",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("se"),
           Currency = Currency.SEK
         )
@@ -2684,7 +2894,8 @@ enum Country(
           name = "Singapore",
           capital = "Singapore",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sg"),
           Currency = Currency.SGD
         )
@@ -2697,7 +2908,8 @@ enum Country(
           name = "Saint Helena",
           capital = "Jamestown",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("sh"),
           Currency = Currency.SHP
         )
@@ -2710,7 +2922,8 @@ enum Country(
           name = "Slovenia",
           capital = "Ljubljana",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("si"),
           Currency = Currency.EUR
         )
@@ -2723,7 +2936,7 @@ enum Country(
           name = "Svalbard and Jan Mayen",
           capital = "Longyearbyen",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernEurope,
           topLevelDomain = CcTLD("sj"),
           Currency = Currency.NOK
         )
@@ -2736,7 +2949,8 @@ enum Country(
           name = "Slovakia",
           capital = "Bratislava",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sk"),
           Currency = Currency.EUR
         )
@@ -2749,7 +2963,8 @@ enum Country(
           name = "Sierra Leone",
           capital = "Freetown",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("sl"),
           Currency = Currency.SLL
         )
@@ -2762,7 +2977,8 @@ enum Country(
           name = "San Marino",
           capital = "San Marino",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sm"),
           Currency = Currency.EUR
         )
@@ -2775,7 +2991,8 @@ enum Country(
           name = "Senegal",
           capital = "Dakar",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("sn"),
           Currency = Currency.XOF
         )
@@ -2788,7 +3005,8 @@ enum Country(
           name = "Somalia",
           capital = "Mogadishu",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("so"),
           Currency = Currency.SOS
         )
@@ -2801,7 +3019,8 @@ enum Country(
           name = "Suriname",
           capital = "Paramaribo",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("sr"),
           Currency = Currency.SRD
         )
@@ -2814,7 +3033,8 @@ enum Country(
           name = "Sao Tome and Principe",
           capital = "Sao Tome",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("st"),
           Currency = Currency.STN
         )
@@ -2827,7 +3047,8 @@ enum Country(
           name = "El Salvador",
           capital = "San Salvador",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.CentralAmerica,
           topLevelDomain = CcTLD("sv"),
           Currency = Currency.USD
         )
@@ -2837,10 +3058,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("SXM"),
           isoNumeric = ISO3166_1_Numeric("534"),
           fips = Fips10_4("NN"),
-          name = "Sint Maarten",
+          name = "Sint Maarten (Dutch part)",
           capital = "Philipsburg",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("sx"),
           Currency = Currency.ANG
         )
@@ -2850,10 +3072,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("SYR"),
           isoNumeric = ISO3166_1_Numeric("760"),
           fips = Fips10_4("SY"),
-          name = "Syria",
+          name = "Syrian Arab Republic",
           capital = "Damascus",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("sy"),
           Currency = Currency.SYP
         )
@@ -2866,7 +3089,8 @@ enum Country(
           name = "Eswatini",
           capital = "Mbabane",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.SouthernAfrica,
           topLevelDomain = CcTLD("sz"),
           Currency = Currency.SZL
         )
@@ -2879,7 +3103,8 @@ enum Country(
           name = "Turks and Caicos Islands",
           capital = "Cockburn Town",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("tc"),
           Currency = Currency.USD
         )
@@ -2892,7 +3117,8 @@ enum Country(
           name = "Chad",
           capital = "N'Djamena",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.MiddleAfrica,
           topLevelDomain = CcTLD("td"),
           Currency = Currency.XAF
         )
@@ -2904,8 +3130,9 @@ enum Country(
           fips = Fips10_4("FS"),
           name = "French Southern Territories",
           capital = "Port-aux-Francais",
-          region = Region.Antarctica,
-          subRegion = SubRegion.SouthernAsia,
+          region = Region.Africa,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("tf"),
           Currency = Currency.EUR
         )
@@ -2918,7 +3145,8 @@ enum Country(
           name = "Togo",
           capital = "Lome",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.WesternAfrica,
           topLevelDomain = CcTLD("tg"),
           Currency = Currency.XOF
         )
@@ -2931,7 +3159,8 @@ enum Country(
           name = "Thailand",
           capital = "Bangkok",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("th"),
           Currency = Currency.THB
         )
@@ -2944,7 +3173,8 @@ enum Country(
           name = "Tajikistan",
           capital = "Dushanbe",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.CentralAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tj"),
           Currency = Currency.TJS
         )
@@ -2957,7 +3187,8 @@ enum Country(
           name = "Tokelau",
           capital = "",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tk"),
           Currency = Currency.NZD
         )
@@ -2969,8 +3200,9 @@ enum Country(
           fips = Fips10_4("TT"),
           name = "Timor Leste",
           capital = "Dili",
-          region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          region = Region.Asia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tl"),
           Currency = Currency.USD
         )
@@ -2983,7 +3215,8 @@ enum Country(
           name = "Turkmenistan",
           capital = "Ashgabat",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.CentralAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tm"),
           Currency = Currency.TMT
         )
@@ -2996,7 +3229,8 @@ enum Country(
           name = "Tunisia",
           capital = "Tunis",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAfrica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tn"),
           Currency = Currency.TND
         )
@@ -3009,7 +3243,8 @@ enum Country(
           name = "Tonga",
           capital = "Nuku'alofa",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("to"),
           Currency = Currency.TOP
         )
@@ -3019,10 +3254,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("TUR"),
           isoNumeric = ISO3166_1_Numeric("792"),
           fips = Fips10_4("TU"),
-          name = "Turkey",
+          name = "Türkiye",
           capital = "Ankara",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tr"),
           Currency = Currency.TRY
         )
@@ -3035,7 +3271,8 @@ enum Country(
           name = "Trinidad and Tobago",
           capital = "Port of Spain",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("tt"),
           Currency = Currency.TTD
         )
@@ -3048,7 +3285,8 @@ enum Country(
           name = "Tuvalu",
           capital = "Funafuti",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tv"),
           Currency = Currency.AUD
         )
@@ -3061,7 +3299,8 @@ enum Country(
           name = "Taiwan",
           capital = "Taipei",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("tw"),
           Currency = Currency.TWD
         )
@@ -3071,10 +3310,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("TZA"),
           isoNumeric = ISO3166_1_Numeric("834"),
           fips = Fips10_4("TZ"),
-          name = "Tanzania",
+          name = "United Republic of Tanzania",
           capital = "Dodoma",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("tz"),
           Currency = Currency.TZS
         )
@@ -3087,7 +3327,8 @@ enum Country(
           name = "Ukraine",
           capital = "Kyiv",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.EasternEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ua"),
           Currency = Currency.UAH
         )
@@ -3100,7 +3341,8 @@ enum Country(
           name = "Uganda",
           capital = "Kampala",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("ug"),
           Currency = Currency.UGX
         )
@@ -3113,7 +3355,8 @@ enum Country(
           name = "United States Minor Outlying Islands",
           capital = "",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Micronesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("um"),
           Currency = Currency.USD
         )
@@ -3126,7 +3369,8 @@ enum Country(
           name = "United States",
           capital = "Washington",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.NorthernAmerica,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("us"),
           Currency = Currency.USD
         )
@@ -3139,7 +3383,8 @@ enum Country(
           name = "Uruguay",
           capital = "Montevideo",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("uy"),
           Currency = Currency.UYU
         )
@@ -3152,7 +3397,8 @@ enum Country(
           name = "Uzbekistan",
           capital = "Tashkent",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.CentralAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("uz"),
           Currency = Currency.UZS
         )
@@ -3162,10 +3408,11 @@ enum Country(
           iso3 = ISO3166_1_Alpha3("VAT"),
           isoNumeric = ISO3166_1_Numeric("336"),
           fips = Fips10_4("VT"),
-          name = "Vatican",
+          name = "Holy See",
           capital = "Vatican City",
           region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthernEurope,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("va"),
           Currency = Currency.EUR
         )
@@ -3178,7 +3425,8 @@ enum Country(
           name = "Saint Vincent and the Grenadines",
           capital = "Kingstown",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("vc"),
           Currency = Currency.XCD
         )
@@ -3191,7 +3439,8 @@ enum Country(
           name = "Venezuela",
           capital = "Caracas",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.SouthAmerica,
           topLevelDomain = CcTLD("ve"),
           Currency = Currency.VES
         )
@@ -3204,7 +3453,8 @@ enum Country(
           name = "British Virgin Islands",
           capital = "Road Town",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("vg"),
           Currency = Currency.USD
         )
@@ -3217,7 +3467,8 @@ enum Country(
           name = "U.S. Virgin Islands",
           capital = "Charlotte Amalie",
           region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.LatinAmericaAndTheCaribbean,
+          intermediateRegion = IntermediateRegion.Caribbean,
           topLevelDomain = CcTLD("vi"),
           Currency = Currency.USD
         )
@@ -3230,7 +3481,8 @@ enum Country(
           name = "Vietnam",
           capital = "Hanoi",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SouthEasternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("vn"),
           Currency = Currency.VND
         )
@@ -3243,7 +3495,8 @@ enum Country(
           name = "Vanuatu",
           capital = "Port Vila",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Melanesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("vu"),
           Currency = Currency.VUV
         )
@@ -3256,7 +3509,8 @@ enum Country(
           name = "Wallis and Futuna",
           capital = "Mata Utu",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("wf"),
           Currency = Currency.XPF
         )
@@ -3269,7 +3523,8 @@ enum Country(
           name = "Samoa",
           capital = "Apia",
           region = Region.Oceania,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.Polynesia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ws"),
           Currency = Currency.WST
         )
@@ -3282,7 +3537,8 @@ enum Country(
           name = "Yemen",
           capital = "Sanaa",
           region = Region.Asia,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.WesternAsia,
+          intermediateRegion = Absent,
           topLevelDomain = CcTLD("ye"),
           Currency = Currency.YER
         )
@@ -3295,7 +3551,8 @@ enum Country(
           name = "Mayotte",
           capital = "Mamoudzou",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("yt"),
           Currency = Currency.EUR
         )
@@ -3308,7 +3565,8 @@ enum Country(
           name = "South Africa",
           capital = "Pretoria",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.SouthernAfrica,
           topLevelDomain = CcTLD("za"),
           Currency = Currency.ZAR
         )
@@ -3321,7 +3579,8 @@ enum Country(
           name = "Zambia",
           capital = "Lusaka",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("zm"),
           Currency = Currency.ZMW
         )
@@ -3334,35 +3593,10 @@ enum Country(
           name = "Zimbabwe",
           capital = "Harare",
           region = Region.Africa,
-          subRegion = SubRegion.SouthernAsia,
+          subRegion = SubRegion.SubSaharanAfrica,
+          intermediateRegion = IntermediateRegion.EasternAfrica,
           topLevelDomain = CcTLD("zw"),
           Currency = Currency.ZWL
-        )
-
-    case SerbiaAndMontenegro extends Country(
-          iso2 = ISO3166_1_Alpha2("CS"),
-          iso3 = ISO3166_1_Alpha3("SCG"),
-          isoNumeric = ISO3166_1_Numeric("891"),
-          fips = Fips10_4("YI"),
-          name = "Serbia and Montenegro",
-          capital = "Belgrade",
-          region = Region.Europe,
-          subRegion = SubRegion.SouthernAsia,
-          topLevelDomain = CcTLD("cs"),
-          Currency = Currency.RSD
-        )
-
-    case NetherlandsAntilles extends Country(
-          iso2 = ISO3166_1_Alpha2("AN"),
-          iso3 = ISO3166_1_Alpha3("ANT"),
-          isoNumeric = ISO3166_1_Numeric("530"),
-          fips = Fips10_4("NT"),
-          name = "Netherlands Antilles",
-          capital = "Willemstad",
-          region = Region.Americas,
-          subRegion = SubRegion.SouthernAsia,
-          topLevelDomain = CcTLD("an"),
-          Currency = Currency.ANG
         )
 
 end Country

@@ -24,6 +24,17 @@ type Maybe[A] = A | Absent.type
 
 object Maybe:
     /**
+     * Creates a `Maybe` instance from an `Option`.
+     * 
+     * @param opt The option to convert.
+     * @tparam A The type of the value.
+     * @return The `Maybe` instance representing the option.
+     */
+    def apply[A](opt: Option[A]): Maybe[A] = opt match
+        case Some(value) => value
+        case None        => Absent
+
+    /**
      * Creates a `Maybe` instance with a present value.
      * 
      * @param value The value to be wrapped.

@@ -9,17 +9,17 @@ import io.github.iltotore.iron.*
 /**
  * Enumeration representing major languages (all languages that have a ISO 639-1 code) with their ISO 639 codes and names.
  *
- * @param iso639_1 The ISO 639-1 code for the language.
- * @param iso639_2_Terminology The ISO 639-2 Terminology code for the language.
- * @param iso639_2_Bibliographic The ISO 639-2 Bibliographic code for the language.
- * @param iso639_3 The ISO 639-3 code for the language.
+ * @param iso The ISO 639-1 code for the language.
+ * @param iso2T The ISO 639-2 Terminology code for the language.
+ * @param iso2B The ISO 639-2 Bibliographic code for the language.
+ * @param iso3 The ISO 639-3 code for the language.
  * @param name The name of the language.
  */
 enum Language(
-    val iso639_1: ISO639_1,
-    val iso639_2_Terminology: Maybe[ISO639_2],
-    val iso639_2_Bibliographic: Maybe[ISO639_2],
-    val iso639_3: Maybe[ISO639_3],
+    val iso: ISO639_1,
+    val iso2T: Maybe[ISO639_2],
+    val iso2B: Maybe[ISO639_2],
+    val iso3: Maybe[ISO639_3],
     val name: String
 ):
     /**
